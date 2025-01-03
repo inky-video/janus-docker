@@ -1,0 +1,19 @@
+services:
+  janus:
+    image: janus:latest
+    network_mode: host
+    privileged: true
+    restart: always
+    ulimits:
+      core: -1
+      nofile:
+        hard: 40000
+        soft: 40000
+      nproc: 65535
+    volumes:
+      - ./configs:/opt/janus/etc/janus
+      - ./recordings:/opt/janus/share/janus/recordings
+      - ./logs:/opt/janus/logs
+    # environment:
+    #   - DEBUG="mediasoup:WARN:* mediasoup:ERROR:*"
+# version: '3'
