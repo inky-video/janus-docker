@@ -1,5 +1,7 @@
 FROM ubuntu:22.04
 
+COPY ./sources.list /etc/apt/sources.list
+
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
         libmicrohttpd-dev libjansson-dev \
@@ -8,10 +10,14 @@ RUN apt-get update \
         libconfig-dev pkg-config libtool automake \
         git meson \
         ca-certificates \
-        wget make cmake gcc g++ \
 	&& rm -rf /var/lib/apt/lists/*
 
-
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+    wget make cmake gcc g++ \
+    libavcodec-dev libavformat-dev libavfilter-dev libavdevice-dev libavutil-dev libswscale-dev libswresample-dev libpostproc-dev \
+    ffmpeg \
+	&& rm -rf /var/lib/apt/lists/*
     
 WORKDIR /opt
 # install libnice
@@ -39,7 +45,7 @@ WORKDIR /code
 RUN git clone https://github.com/meetecho/janus-gateway.git \
     && cd janus-gateway \
     && sh autogen.sh \
-    && ./configure --prefix=/opt/janus \
+    && ./configure --prefix=/opt/janus --enable-post-processing \
     && make && make install
 
 CMD ["/opt/janus/bin/janus"]
